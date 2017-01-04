@@ -15,5 +15,7 @@
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) UIColor *titleColor;
 @property (nonatomic, strong) UIFont *titleFont;
+@property (nonatomic) BOOL autoResizeTitle;
+@property (nonatomic) BOOL rowSeparator;
 
 @end

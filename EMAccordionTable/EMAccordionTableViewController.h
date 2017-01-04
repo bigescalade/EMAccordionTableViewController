@@ -32,6 +32,11 @@ typedef NS_ENUM(NSUInteger, EMAnimationType) {
 @property (nonatomic, strong) EMAccordionTableParallaxHeaderView *parallaxHeaderView;
 @property (nonatomic, strong) NSMutableArray *sectionsHeaders;
 @property (nonatomic) NSInteger defaultOpenedSection;
+@property (nonatomic) float aivHeight;
+@property (nonatomic) float aivWidth;
+@property (nonatomic) float aivRightPadding;
+@property (nonatomic) UIColor *borderColor;
+@property (nonatomic) BOOL rotateAndPerspectiveAnimation;
 
 - (id) initWithTable:(UITableView *)tableView withAnimationType:(EMAnimationType) type;
 

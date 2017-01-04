@@ -15,5 +15,7 @@
 @synthesize title = _title;
 @synthesize titleColor = _titleColor;
 @synthesize titleFont = _titleFont;
+@synthesize autoResizeTitle = _autoResizeTitle;
+@synthesize rowSeparator = _rowSeparator;
 
 @end

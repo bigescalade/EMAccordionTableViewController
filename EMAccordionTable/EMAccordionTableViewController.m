@@ -38,11 +38,22 @@
 @synthesize tableView = _tableView;
 @synthesize sectionsHeaders = _sectionsHeaders;
 @synthesize defaultOpenedSection = _defaultOpenedSection;
+@synthesize aivHeight = _aivHeight;
+@synthesize aivWidth = _aivWidth;
+@synthesize aivRightPadding = _aivRightPadding;
+@synthesize borderColor = _borderColor;
+@synthesize rotateAndPerspectiveAnimation = _rotateAndPerspectiveAnimation;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     showedCell = 0;
+    
+    //defaults
+    _aivWidth = 30.0f;
+    _aivHeight = 30.0f;
+    _aivRightPadding = 40.0f;
+    _borderColor = [UIColor grayColor];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -163,7 +174,7 @@
     UIView *sectionView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.frame.size.width, tableView.sectionHeaderHeight)];
     [sectionView setBackgroundColor:emAccordionSection.backgroundColor];
     
-    UIButton *sectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(sectionView.frame.size.width - 40.0f, (sectionView.frame.size.height / 2) - 15.0f, 30.0f, 30.0f)];
+    UIButton *sectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(sectionView.frame.size.width - self.aivRightPadding, (sectionView.frame.size.height / 2) - (self.aivHeight / 2), 30.0f, 30.0f)];
     [sectionBtn addTarget:self action:@selector(openTheSection:) forControlEvents:UIControlEventTouchDown];
     [sectionBtn setTag:(kSectionTag + section)];
     [sectionView addSubview:sectionBtn];
@@ -173,9 +184,17 @@
     [cellTitle setTextColor:emAccordionSection.titleColor];
     [cellTitle setBackgroundColor:[UIColor clearColor]];
     [cellTitle setFont:emAccordionSection.titleFont];
+    
+    if (emAccordionSection.autoResizeTitle) {
+        cellTitle.numberOfLines = 0;
+        [cellTitle sizeToFit];
+        cellTitle.frame = CGRectMake(cellTitle.frame.origin.x, (sectionView.frame.size.height / 2) - (cellTitle.frame.size.height / 2), cellTitle.frame.size.width, cellTitle.frame.size.height);
+    }
+    
     [sectionView addSubview:cellTitle];
     
-    UIImageView *accessoryIV = [[UIImageView alloc] initWithFrame:CGRectMake(sectionView.frame.size.width - 40.0f, (sectionView.frame.size.height / 2) - 15.0f, 30.0f, 30.0f)];
+    UIImageView *accessoryIV = [[UIImageView alloc] initWithFrame:CGRectMake(sectionView.frame.size.width - self.aivRightPadding, (sectionView.frame.size.height / 2) - (self.aivHeight / 2), self.aivWidth, self.aivHeight)];
+    
     BOOL value = [[sectionsOpened objectAtIndex:section] boolValue];
     [accessoryIV setBackgroundColor:[UIColor clearColor]];
     if (value)
@@ -190,6 +209,15 @@
     if ([emDelegate respondsToSelector:@selector(tableView:viewForHeaderInSection:)])
         return [emDelegate tableView:tableView viewForHeaderInSection:section];
     
+    if (emAccordionSection.rowSeparator) {
+        CGSize mainViewSize = self.view.bounds.size;
+        CGFloat borderWidth = 1;
+        UIView *topBorder = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, mainViewSize.width, borderWidth)];
+        topBorder.opaque = YES;
+        topBorder.backgroundColor = _borderColor;
+        [sectionView addSubview:topBorder];
+    }
+
     return sectionView;
 }
 
@@ -226,27 +254,29 @@
 }
 
 - (void) showCellsWithAnimation {
-    NSArray *cells = self.tableView.visibleCells;
     
-    if (showedCell >= cells.count)
-        return;
-//    for (UIView *card in cells) {
-    
-    UIView *card = [cells objectAtIndex:showedCell];
-    
-    CATransform3D rotationAndPerspectiveTransform = CATransform3DIdentity;
-    rotationAndPerspectiveTransform.m34 = 1.0 / -200.0;
-    rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, DEGREES_TO_RADIANS(90), 1.0f, 0.0f, 0.0f);
-    card.layer.transform = rotationAndPerspectiveTransform;
-    rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, DEGREES_TO_RADIANS(-90), 1.0f, 0.0f, 0.0f);
-    [UIView animateWithDuration:.4 animations:^{
-        card.alpha = 1.0f;
+    if (self.rotateAndPerspectiveAnimation) {
+        NSArray *cells = self.tableView.visibleCells;
+        
+        if (showedCell >= cells.count)
+            return;
+        //    for (UIView *card in cells) {
+        
+        UIView *card = [cells objectAtIndex:showedCell];
+        
+        CATransform3D rotationAndPerspectiveTransform = CATransform3DIdentity;
+        rotationAndPerspectiveTransform.m34 = 1.0 / -200.0;
+        rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, DEGREES_TO_RADIANS(90), 1.0f, 0.0f, 0.0f);
         card.layer.transform = rotationAndPerspectiveTransform;
-    } completion:^(BOOL finished){
-        showedCell++;
-        [self showCellsWithAnimation];
-    }];
-//    }
+        rotationAndPerspectiveTransform = CATransform3DRotate(rotationAndPerspectiveTransform, DEGREES_TO_RADIANS(-90), 1.0f, 0.0f, 0.0f);
+        [UIView animateWithDuration:.4 animations:^{
+            card.alpha = 1.0f;
+            card.layer.transform = rotationAndPerspectiveTransform;
+        } completion:^(BOOL finished){
+            showedCell++;
+            [self showCellsWithAnimation];
+        }];
+    }
 }
 
 @end
