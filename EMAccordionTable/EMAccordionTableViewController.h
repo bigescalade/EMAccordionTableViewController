@@ -21,7 +21,7 @@ typedef NS_ENUM(NSUInteger, EMAnimationType) {
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 - (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section;
-- (void) latestSectionOpened;
+- (void) latestSectionOpened:(NSUInteger)index;
 @end
 
 @interface EMAccordionTableViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
