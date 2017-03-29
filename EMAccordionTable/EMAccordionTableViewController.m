@@ -246,7 +246,7 @@
     if (!value)
         [self showCellsWithAnimation];
     
-    [emDelegate latestSectionOpened];
+    [emDelegate latestSectionOpened:index];
 }
 
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView {
